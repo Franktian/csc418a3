@@ -29,3 +29,6 @@
 
 # Raytracer
 raytracer
+
+# Images
+*.bmp
