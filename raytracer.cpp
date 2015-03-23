@@ -88,12 +88,12 @@ void Raytracer::rotate( SceneDagNode* node, char axis, double angle ) {
 			break;
 		}
 		if (i == 0) {
-		    node->trans = node->trans*rotation; 	
+		    node->trans = node->trans*rotation;
 			angle = -angle;
 		} 
 		else {
-			node->invtrans = rotation*node->invtrans; 
-		}	
+			node->invtrans = rotation*node->invtrans;
+		}
 	}
 }
 
@@ -103,11 +103,11 @@ void Raytracer::translate( SceneDagNode* node, Vector3D trans ) {
 	translation[0][3] = trans[0];
 	translation[1][3] = trans[1];
 	translation[2][3] = trans[2];
-	node->trans = node->trans*translation; 	
+	node->trans = node->trans*translation;
 	translation[0][3] = -trans[0];
 	translation[1][3] = -trans[1];
 	translation[2][3] = -trans[2];
-	node->invtrans = translation*node->invtrans; 
+	node->invtrans = translation*node->invtrans;
 }
 
 void Raytracer::scale( SceneDagNode* node, Point3D origin, double factor[3] ) {
@@ -119,14 +119,14 @@ void Raytracer::scale( SceneDagNode* node, Point3D origin, double factor[3] ) {
 	scale[1][3] = origin[1] - factor[1] * origin[1];
 	scale[2][2] = factor[2];
 	scale[2][3] = origin[2] - factor[2] * origin[2];
-	node->trans = node->trans*scale; 	
+	node->trans = node->trans*scale;
 	scale[0][0] = 1/factor[0];
 	scale[0][3] = origin[0] - 1/factor[0] * origin[0];
 	scale[1][1] = 1/factor[1];
 	scale[1][3] = origin[1] - 1/factor[1] * origin[1];
 	scale[2][2] = 1/factor[2];
 	scale[2][3] = origin[2] - 1/factor[2] * origin[2];
-	node->invtrans = scale*node->invtrans; 
+	node->invtrans = scale*node->invtrans;
 }
 
 Matrix4x4 Raytracer::initInvViewMatrix( Point3D eye, Vector3D view, 
@@ -151,7 +151,7 @@ Matrix4x4 Raytracer::initInvViewMatrix( Point3D eye, Vector3D view,
 	mat[1][3] = eye[1];
 	mat[2][3] = eye[2];
 
-	return mat; 
+	return mat;
 }
 
 void Raytracer::traverseScene( SceneDagNode* node, Ray3D& ray ) {
@@ -215,23 +215,23 @@ void Raytracer::flushPixelBuffer( char *file_name ) {
 }
 
 Colour Raytracer::shadeRay( Ray3D& ray ) {
-	Colour col(0.0, 0.0, 0.0); 
-	traverseScene(_root, ray); 
+	Colour col(0.0, 0.0, 0.0);
+	traverseScene(_root, ray);
 	
-	// Don't bother shading if the ray didn't hit 
+	// Don't bother shading if the ray didn't hit
 	// anything.
 	if (!ray.intersection.none) {
 		computeShading(ray); 
-		col = ray.col;  
+		col = ray.col;
 	}
 
-	// You'll want to call shadeRay recursively (with a different ray, 
-	// of course) here to implement reflection/refraction effects.  
+	// You'll want to call shadeRay recursively (with a different ray,
+	// of course) here to implement reflection/refraction effects.
 
-	return col; 
-}	
+	return col;
+}
 
-void Raytracer::render( int width, int height, Point3D eye, Vector3D view, 
+void Raytracer::render( int width, int height, Point3D eye, Vector3D view,
 		Vector3D up, double fov, char* fileName ) {
 	Matrix4x4 viewToWorld;
 	_scrWidth = width;
@@ -244,7 +244,7 @@ void Raytracer::render( int width, int height, Point3D eye, Vector3D view,
 	// Construct a ray for each pixel.
 	for (int i = 0; i < _scrHeight; i++) {
 		for (int j = 0; j < _scrWidth; j++) {
-			// Sets up ray origin and direction in view space, 
+			// Sets up ray origin and direction in view space,
 			// image plane is at z = -1.
 			Point3D origin(0, 0, 0);
 			Point3D imagePlane;
@@ -252,14 +252,14 @@ void Raytracer::render( int width, int height, Point3D eye, Vector3D view,
 			imagePlane[1] = (-double(height)/2 + 0.5 + i)/factor;
 			imagePlane[2] = -1;
 
-			// TODO: Convert ray to world space and call 
-			// shadeRay(ray) to generate pixel colour. 	
+			// TODO: Convert ray to world space and call
+			// shadeRay(ray) to generate pixel colour. 
 			
 			Vector3D dir = viewToWorld * (imagePlane - origin);
 			dir.normalize();
 			Ray3D ray(viewToWorld * origin, dir);
 
-			Colour col = shadeRay(ray); 
+			Colour col = shadeRay(ray);
 
 			_rbuffer[i*width+j] = int(col[0]*255);
 			_gbuffer[i*width+j] = int(col[1]*255);
@@ -276,32 +276,32 @@ int main(int argc, char* argv[])
 	// functions from Raytracer.  The code here sets up an example
 	// scene and renders it from two different view points, DO NOT
 	// change this if you're just implementing part one of the 
-	// assignment.  
+	// assignment.
 	Raytracer raytracer;
-	int width = 320; 
-	int height = 240; 
+	int width = 320;
+	int height = 240;
 
 	if (argc == 3) {
 		width = atoi(argv[1]);
 		height = atoi(argv[2]);
 	}
 
-	// Camera parameters.
+	// Camera parameters
 	Point3D eye(0, 0, 1);
 	Vector3D view(0, 0, -1);
 	Vector3D up(0, 1, 0);
 	double fov = 60;
 
 	// Defines a material for shading.
-	Material gold( Colour(0.3, 0.3, 0.3), Colour(0.75164, 0.60648, 0.22648), 
-			Colour(0.628281, 0.555802, 0.366065), 
+	Material gold( Colour(0.3, 0.3, 0.3), Colour(0.75164, 0.60648, 0.22648),
+			Colour(0.628281, 0.555802, 0.366065),
 			51.2 );
-	Material jade( Colour(0, 0, 0), Colour(0.54, 0.89, 0.63), 
-			Colour(0.316228, 0.316228, 0.316228), 
+	Material jade( Colour(0, 0, 0), Colour(0.54, 0.89, 0.63),
+			Colour(0.316228, 0.316228, 0.316228),
 			12.8 );
 
 	// Defines a point light source.
-	raytracer.addLightSource( new PointLight(Point3D(0, 0, 5), 
+	raytracer.addLightSource( new PointLight(Point3D(0, 0, 5),
 				Colour(0.9, 0.9, 0.9) ) );
 
 	// Add a unit square into the scene with material mat.
@@ -311,17 +311,17 @@ int main(int argc, char* argv[])
 	// Apply some transformations to the unit square.
 	double factor1[3] = { 1.0, 2.0, 1.0 };
 	double factor2[3] = { 6.0, 6.0, 6.0 };
-	raytracer.translate(sphere, Vector3D(0, 0, -5));	
+	raytracer.translate(sphere, Vector3D(0, 0, -5));
 	raytracer.rotate(sphere, 'x', -45); 
 	raytracer.rotate(sphere, 'z', 45); 
 	raytracer.scale(sphere, Point3D(0, 0, 0), factor1);
 
-	raytracer.translate(plane, Vector3D(0, 0, -7));	
+	raytracer.translate(plane, Vector3D(0, 0, -7));
 	raytracer.rotate(plane, 'z', 45); 
 	raytracer.scale(plane, Point3D(0, 0, 0), factor2);
 
 	// Render the scene, feel free to make the image smaller for
-	// testing purposes.	
+	// testing purposes.
 	raytracer.render(width, height, eye, view, up, fov, "view1.bmp");
 	
 	// Render it from a different point of view.
@@ -331,4 +331,3 @@ int main(int argc, char* argv[])
 	
 	return 0;
 }
-
