@@ -40,4 +40,3 @@ void PointLight::shade( Ray3D& ray ) {
 	ray.col.clamp();
 
 }
-
