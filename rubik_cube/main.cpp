@@ -209,6 +209,9 @@ bool renderColor();
 void setPolygonMaterial();
 void setRenderStyle();
 
+// Functions for new rubiks cube
+void drawRubikCube();
+
 
 // Image functions
 void writeFrame(char* filename, bool pgm, bool frontBuffer);
@@ -920,7 +923,9 @@ void display(void)
 		// Set rendering style
 		setRenderStyle();
 
-		drawPenguin();
+		// drawPenguin();
+		
+		drawRubikCube();
 	
 	glPopMatrix();
 
@@ -937,6 +942,53 @@ void display(void)
     // Now, show the frame buffer that we just drew into.
     // (this prevents flickering).
     glutSwapBuffers();
+}
+
+void drawRubikCube()
+{
+	glPushMatrix();
+		// Front
+		glPushMatrix();
+			glTranslatef(1.1, 1.1, 1.1);
+			drawCube();
+		glPopMatrix();
+		
+		glPushMatrix();
+			glTranslatef(-1.1, 1.1, 1.1);
+			drawCube();
+		glPopMatrix();
+		
+		glPushMatrix();
+			glTranslatef(1.1, -1.1, 1.1);
+			drawCube();
+		glPopMatrix();
+		
+		glPushMatrix();
+			glTranslatef(-1.1, -1.1, 1.1);
+			drawCube();
+		glPopMatrix();
+		
+		// Back
+		glPushMatrix();
+			glTranslatef(1.1, 1.1, -1.1);
+			drawCube();
+		glPopMatrix();
+		
+		glPushMatrix();
+			glTranslatef(-1.1, 1.1, -1.1);
+			drawCube();
+		glPopMatrix();
+		
+		glPushMatrix();
+			glTranslatef(1.1, -1.1, -1.1);
+			drawCube();
+		glPopMatrix();
+		
+		glPushMatrix();
+			glTranslatef(-1.1, -1.1, -1.1);
+			drawCube();
+		glPopMatrix();
+	glPopMatrix();
 }
 
 void setRenderStyle()
