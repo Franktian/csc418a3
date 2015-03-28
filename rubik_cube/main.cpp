@@ -301,6 +301,12 @@ void loadKeyframeButton(int)
 	status->set_text(msg);
 }
 
+void rotateButton(int)
+{
+	sprintf(msg, "Rotate Button clicked");
+	status->set_text(msg);
+}
+
 // Update Keyframe button handler. Called when the "update keyframe" button is pressed
 void updateKeyframeButton(int)
 {
@@ -655,13 +661,7 @@ void initGlui()
 	// Add buttons to load and save keyframes from a file
 	// Add buttons to start / stop animation and to render frames to file
 	glui_panel = glui_keyframe->add_panel("", GLUI_PANEL_NONE);
-	glui_keyframe->add_button_to_panel(glui_panel, "Load Keyframe", 0, loadKeyframeButton);
-	glui_keyframe->add_button_to_panel(glui_panel, "Load Keyframes From File", 0, loadKeyframesFromFileButton);
-	glui_keyframe->add_button_to_panel(glui_panel, "Start / Stop Animation", 0, animateButton);
-	glui_keyframe->add_column_to_panel(glui_panel, false);
-	glui_keyframe->add_button_to_panel(glui_panel, "Update Keyframe", 0, updateKeyframeButton);
-	glui_keyframe->add_button_to_panel(glui_panel, "Save Keyframes To File", 0, saveKeyframesToFileButton);
-	glui_keyframe->add_button_to_panel(glui_panel, "Render Frames To File", 0, renderFramesToFileButton);
+	glui_keyframe->add_button_to_panel(glui_panel, "Rotate", 0, rotateButton);
 
 	glui_keyframe->add_separator();
 
