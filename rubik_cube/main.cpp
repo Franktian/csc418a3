@@ -89,7 +89,7 @@ const GLdouble FAR_CLIP    = 1000.0;
 
 // Render settings
 enum { WIREFRAME, SOLID, OUTLINED, SHINYMETAL, MATTE };	// README: the different render styles
-int renderStyle = WIREFRAME;			// README: the selected render style
+int renderStyle = SOLID;			// README: the selected render style
 
 // Animation settings
 int animate_mode = 0;			// 0 = no anim, 1 = animate
@@ -198,12 +198,6 @@ void motion(int x, int y);
 // Functions to help draw the object
 Vector getInterpolatedJointDOFS(float time);
 void drawCube();
-void drawPenguin();
-void drawBody();
-void drawHead();
-void drawBeak();
-void drawArms();
-void drawLegs();
 void drawLight();
 bool renderColor();
 void setPolygonMaterial();
@@ -921,7 +915,7 @@ void display(void)
 		glRotatef(joint_ui_data->getDOF(Keyframe::ROOT_ROTATE_Z), 0, 0, 1);
 
 		// Set rendering style
-		setRenderStyle();
+		// setRenderStyle();
 
 		// drawPenguin();
 		
@@ -991,29 +985,6 @@ void drawRubikCube()
 	glPopMatrix();
 }
 
-void setRenderStyle()
-{
-	// Control wirefram, outlined rendering style
-	switch (renderStyle)
-	{
-		case SHINYMETAL:
-		case MATTE:
-		case SOLID:
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-			break;
-		case OUTLINED:
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-			renderStyle = SOLID;
-			drawPenguin();
-			renderStyle = OUTLINED;
-		case WIREFRAME:
-		default:
-			glEnable(GL_LIGHTING);
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-			break;
-	}
-}
-
 // Draw the light source, circle parallel to xy plane
 void drawLight()
 {
@@ -1026,174 +997,6 @@ void drawLight()
 			35.0
 		};
 		glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-	glPopMatrix();
-}
-
-// Draw the penguin
-void drawPenguin()
-{
-	glPushMatrix();
-		drawHead();
-		drawBody();
-		drawArms();
-		drawLegs();
-	glPopMatrix();
-}
-
-// Draw the penguin body
-void drawBody()
-{
-	glPushMatrix();
-		glScalef(0.8f, 1.2f, 0.5f);
-
-		drawCube();
-	glPopMatrix();
-}
-
-// Draw the penguin head
-void drawHead()
-{
-	glPushMatrix();
-		glTranslatef(0.0, 1.2, 0.0);
-		glRotatef(joint_ui_data->getDOF(Keyframe::HEAD), 0, 0, 1);
-		glTranslatef(0.0, 0.5, 0.0);
-		drawBeak();
-		glScalef(0.9f, 0.5f, 0.5f);
-		drawCube();
-	glPopMatrix();
-}
-
-// Draw the penguin beak
-void drawBeak()
-{
-	glPushMatrix();
-	
-		// top beak
-		glPushMatrix();
-			glTranslatef(-1.2, 0.0, 0.0);
-			glScalef(0.3f, 0.05f, 0.1f);
-			drawCube();
-		glPopMatrix();
-		
-		// bottom beak
-		glPushMatrix();
-			glTranslatef(0.0, joint_ui_data->getDOF(Keyframe::BEAK), 0.0);
-			glTranslatef(-1.2, -0.2, 0.0);
-			glScalef(0.3f, 0.05f, 0.1f);
-			drawCube();
-		glPopMatrix();
-	glPopMatrix();
-}
-
-// Draw the penguin arm
-void drawArms()
-{
-	glPushMatrix();
-		// left
-		glPushMatrix();
-			glTranslatef(0.0, 0.5, 0.7);
-			glRotatef(joint_ui_data->getDOF(Keyframe::L_SHOULDER_ROLL), 1, 0, 0);
-			glRotatef(joint_ui_data->getDOF(Keyframe::L_SHOULDER_YAW), 0, 1, 0);
-			glRotatef(joint_ui_data->getDOF(Keyframe::L_SHOULDER_PITCH), 0, 0, 1);
-			glTranslatef(0.0, -0.5, 0.0);
-			// upper
-			glPushMatrix();
-				glTranslatef(0.0, 0.0, 0.0);
-				glScalef(0.3f, 0.5f, 0.1f);
-				drawCube();
-			glPopMatrix();
-			// lower
-			glPushMatrix();
-				glTranslatef(0.0, -0.5, 0.0);
-				glRotatef(-45, 0, 0, 1);
-				glRotatef(joint_ui_data->getDOF(Keyframe::L_ELBOW), 0, 0, 1);
-				glTranslatef(0.0, -0.2, 0.0);
-				glScalef(0.3f, 0.2f, 0.1f);
-				drawCube();
-			glPopMatrix();
-		glPopMatrix();
-		
-		//right
-		glPushMatrix();
-			glTranslatef(0.0, 0.5, -0.7);
-			glRotatef(joint_ui_data->getDOF(Keyframe::R_SHOULDER_ROLL), 1, 0, 0);
-			glRotatef(joint_ui_data->getDOF(Keyframe::R_SHOULDER_YAW), 0, 1, 0);
-			glRotatef(joint_ui_data->getDOF(Keyframe::R_SHOULDER_PITCH), 0, 0, 1);
-			glTranslatef(0.0, -0.5, 0.0);
-		
-			// upper
-			glPushMatrix();
-				glTranslatef(0.0, 0.0, 0.0);
-				glScalef(0.3f, 0.5f, 0.1f);
-				drawCube();
-			glPopMatrix();
-			// lower
-			glPushMatrix();
-				glTranslatef(0.0, -0.5, 0.0);
-				glRotatef(-45, 0, 0, 1);
-				glRotatef(joint_ui_data->getDOF(Keyframe::R_ELBOW), 0, 0, 1);
-				glTranslatef(0.0, -0.2, 0.0);
-				glScalef(0.3f, 0.2f, 0.1f);
-				drawCube();
-			glPopMatrix();
-		glPopMatrix();
-	glPopMatrix();
-}
-
-void drawLegs()
-{
-	glPushMatrix();
-		// left
-		glPushMatrix();
-			glTranslatef(0.0, -1.2, -0.2);
-			glRotatef(-45, 0, 0, 1);
-			glRotatef(joint_ui_data->getDOF(Keyframe::L_HIP_ROLL), 1, 0, 0);
-			glRotatef(joint_ui_data->getDOF(Keyframe::L_HIP_YAW), 0, 1, 0);
-			glRotatef(-joint_ui_data->getDOF(Keyframe::L_HIP_PITCH), 0, 0, 1);
-			glTranslatef(0.0, 1.5, 0.0);
-			// upper
-			glPushMatrix();
-				glTranslatef(0.0, -2.0, 0.0);
-				glScalef(0.1f, 0.5f, 0.1f);
-				drawCube();
-			glPopMatrix();
-			
-			// lower
-			glPushMatrix();
-				glTranslatef(0.0, -2.5, 0.0);
-				glRotatef(-joint_ui_data->getDOF(Keyframe::L_KNEE), 0, 0, 1);
-				glRotatef(-90, 0, 0, 1);
-				glTranslatef(0.0, -0.2, 0.0);
-				glScalef(0.05f, 0.2f, 0.2f);
-				drawCube();
-			glPopMatrix();
-		glPopMatrix();
-		
-		// right
-		glPushMatrix();
-			glTranslatef(0.0, -1.2, 0.2);
-			glRotatef(45, 0, 0, 1);
-			glRotatef(joint_ui_data->getDOF(Keyframe::R_HIP_ROLL), 1, 0, 0);
-			glRotatef(joint_ui_data->getDOF(Keyframe::R_HIP_YAW), 0, 1, 0);
-			glRotatef(-joint_ui_data->getDOF(Keyframe::R_HIP_PITCH), 0, 0, 1);
-			glTranslatef(0.0, 1.5, 0.0);
-			// upper
-			glPushMatrix();
-				glTranslatef(0.0, -2.0, 0.0);
-				glScalef(0.1f, 0.5f, 0.1f);
-				drawCube();
-			glPopMatrix();
-			
-			// lower
-			glPushMatrix();
-				glTranslatef(0.0, -2.5, 0.0);
-				glRotatef(-joint_ui_data->getDOF(Keyframe::R_KNEE), 0, 0, 1);
-				glRotatef(-90, 0, 0, 1);
-				glTranslatef(0.0, -0.2, 0.0);
-				glScalef(0.05f, 0.2f, 0.2f);
-				drawCube();
-			glPopMatrix();
-		glPopMatrix();
 	glPopMatrix();
 }
 
