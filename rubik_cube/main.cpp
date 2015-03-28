@@ -305,6 +305,8 @@ void rotateButton(int)
 {
 	sprintf(msg, "Rotate Button clicked");
 	status->set_text(msg);
+	joint_ui_data->setDOF(Keyframe::ROOT_ROTATE_X, 50.0f);
+	display();
 }
 
 // Update Keyframe button handler. Called when the "update keyframe" button is pressed

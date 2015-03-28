@@ -43,6 +43,7 @@ public:
 		   R_KNEE,
 		   L_KNEE,
 		   LIGHT_ANGLE,
+		   CUBE_ROTATE,
 		   NUM_JOINT_ENUM };
 
 	// constructor
