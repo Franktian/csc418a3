@@ -18,10 +18,10 @@
 // Linked list containing light sources in the scene.
 struct LightListNode {
 	LightListNode() : light(NULL), next(NULL) {}
-	LightListNode( LightSource* light, LightListNode* next = NULL ) : 
+	LightListNode( LightSource* light, LightListNode* next = NULL ) :
 		light(light), next(next) {}
 	~LightListNode() { 
-		if (!light) delete light; 
+		if (!light) delete light;
 	}
 	LightSource* light;
 	LightListNode* next;
@@ -29,12 +29,12 @@ struct LightListNode {
 
 // The scene graph, containing objects in the scene.
 struct SceneDagNode {
-	SceneDagNode() : 
-		obj(NULL), mat(NULL), 
+	SceneDagNode() :
+		obj(NULL), mat(NULL),
 		next(NULL), parent(NULL), child(NULL) {
 	}	
 
-	SceneDagNode( SceneObject* obj, Material* mat ) : 
+	SceneDagNode( SceneObject* obj, Material* mat ) :
 		obj(obj), mat(mat), next(NULL), parent(NULL), child(NULL) {
 		}
 	
