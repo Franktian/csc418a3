@@ -1,0 +1,29 @@
+The penguin is composed of the following basic parts:
+- Head
+- Beak
+- Body
+- Arms
+- Legs
+
+Several rendering methods are defined to draw the penguin
+- drawBody()
+- drawHead()
+- drawBeak()
+- drawArms()
+- drawLegs()
+- drawPenguin()
+
+The drawPenguin() is a method that calls all other draw methods to create
+the penguin as a whole. All drawing methods make call to drawBody() and
+reshape it.
+
+setRenderStyle() - A helper method defined to render the penguin based
+on the chosed style from the UI.
+
+setPolygonMaterial() - A helper method defined to set material for "Shiny metal"
+and "Matte"
+
+
+Lighting
+A light source is created by the drawLight method and is controlled by
+polar coordinates based on the xy plane.
