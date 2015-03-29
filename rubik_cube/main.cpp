@@ -850,26 +850,6 @@ void display(void)
 	// Specify camera transformation
 	glTranslatef(camXPos, camYPos, camZPos);
 
-    ///////////////////////////////////////////////////////////
-    // TODO:
-	//   Modify this function to draw the scene.
-	//   This should include function calls that apply
-	//   the appropriate transformation matrices and render
-	//   the individual body parts.
-	//   Use the 'joint_ui_data' data structure to obtain
-	//   the joint DOFs to specify your transformations.
-	//   Sample code is provided below and demonstrates how
-	//   to access the joint DOF values. This sample code
-	//   should be replaced with your own.
-	//   Use the 'renderStyle' variable and the associated
-	//   enumeration to determine how the geometry should be
-	//   rendered.
-    ///////////////////////////////////////////////////////////
-
-	// SAMPLE CODE **********
-	//
-
-
 	// Draw the light source
 	glPushMatrix();
 		drawLight();
@@ -886,11 +866,6 @@ void display(void)
 		glRotatef(joint_ui_data->getDOF(Keyframe::ROOT_ROTATE_X), 1, 0, 0);
 		glRotatef(joint_ui_data->getDOF(Keyframe::ROOT_ROTATE_Y), 0, 1, 0);
 		glRotatef(joint_ui_data->getDOF(Keyframe::ROOT_ROTATE_Z), 0, 0, 1);
-
-		// Set rendering style
-		// setRenderStyle();
-
-		// drawPenguin();
 		
 		drawRubikCube();
 	
@@ -898,13 +873,6 @@ void display(void)
 
     // Execute any GL functions that are in the queue just to be safe
     glFlush();
-
-	// Dump frame to file, if requested
-	if( frameToFile )
-	{
-		sprintf(filenameF, "frame%03d.ppm", frameNumber);
-		writeFrame(filenameF, false, false);
-	}
 
     // Now, show the frame buffer that we just drew into.
     // (this prevents flickering).
