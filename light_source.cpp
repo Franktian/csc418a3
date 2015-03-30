@@ -20,22 +20,26 @@ void PointLight::shade( Ray3D& ray ) {
 	// is available.  So be sure that traverseScene() is called on the ray 
 	// before this function.
 
-	Vector3D N = ray.intersection.normal;
-	N.normalize();
-	Vector3D L = _pos - ray.intersection.point;
-	L.normalize();
-	Vector3D V = -ray.dir;
-	V.normalize();
-	Vector3D R = 2.*(L.dot(N) * N) - L;
-	R.normalize();
+	Vector3D normal = ray.intersection.normal;
+	normal.normalize();
 
-	Colour Ia = (*ray.intersection.mat).ambient * _col_ambient;
+	Vector3D light_direction = _pos - ray.intersection.point;
+	light_direction.normalize();
 
-	Colour Id = (*ray.intersection.mat).diffuse * (std::max(0.0, N.dot(L)) * _col_diffuse);
+	Vector3D view_direction = -ray.dir;
+	view_direction.normalize();
 
-	Colour Is = (*ray.intersection.mat).specular * (std::max(0.0, pow(V.dot(R), (*ray.intersection.mat).specular_exp)) * _col_specular);
+	Vector3D reflection_direction = 2 * light_direction.dot(normal) * normal - light_direction;
+	reflection_direction.normalize();
 
-	ray.col = Ia + Id + Is;
+
+	Colour ambient = (*ray.intersection.mat).ambient * _col_ambient;
+
+	Colour diffuse = (*ray.intersection.mat).diffuse * (std::max(0.0, normal.dot(light_direction)) * _col_diffuse);
+
+	Colour specular = (*ray.intersection.mat).specular * (std::max(0.0, pow(view_direction.dot(reflection_direction), (*ray.intersection.mat).specular_exp)) * _col_specular);
+
+	ray.col = ambient + diffuse + specular;
 
 	ray.col.clamp();
 
