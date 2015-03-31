@@ -359,13 +359,19 @@ int main(int argc, char* argv[])
 	Material jade( Colour(0, 0, 0), Colour(0.54, 0.89, 0.63),
 			Colour(0.316228, 0.316228, 0.316228),
 			12.8 );
+	Material ruby( Colour(0.1745, 0.01175, 0.01175), Colour(0.61424, 0.04136, 0.04136),
+			Colour(0.727811, 0.626959, 0.626959),
+			61.2 );
+	Material silver( Colour(0.19225, 0.19225, 0.19225), Colour(0.50754, 0.50754, 0.50754),
+			Colour(0.508273, 0.508273, 0.508273),
+			51.2 );
 
 	// Defines a point light source.
 	raytracer.addLightSource( new PointLight(Point3D(0, 0, 5),
 				Colour(0.9, 0.9, 0.9) ) );
 
 	// Add a unit square into the scene with material mat.
-	SceneDagNode* sphere = raytracer.addObject( new UnitSphere(), &gold );
+	SceneDagNode* sphere = raytracer.addObject( new UnitSphere(), &silver );
 	SceneDagNode* plane = raytracer.addObject( new UnitSquare(), &jade );
 	//SceneDagNode* cylinder = raytracer.addObject( new UnitCylinder(), &gold );
 

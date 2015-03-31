@@ -76,9 +76,9 @@ bool UnitSphere::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 	// Quadratic formula to find intersection
 	double a, b, c, d;
 	a = ray_dir.dot(ray_dir);
-	b = 2 * (ray_dir.dot(center_to_ray));
+	b = ray_dir.dot(center_to_ray);
 	c = (center_to_ray).dot(center_to_ray) - 1;
-	d = b * b - 4 * a * c;
+	d = 4 * (b * b - a * c);
 
 	if (d < 0) {
 		return false;
@@ -86,17 +86,17 @@ bool UnitSphere::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 
 	double t, t1, t2;
 
-	t1 = (-b + sqrt(d)) / (2 * a);
-	t2 = (-b - sqrt(d)) / (2 * a);
+	t1 = (-(2 * b) + sqrt(d)) / (2 * a);
+	t2 = (-(2 * b) - sqrt(d)) / (2 * a);
 
 	if (t1 < 0 && t2 < 0) {
 		return false;
-	} else if (t2 < 0) {
+	}
+	if (t1 > 0 && t2 < 0) {
 		t = t1;
-	} else if (t1 < 0) {
+	}
+	if (t1 > t2 && t2 > 0) {
 		t = t2;
-	} else {
-		t = fmin(t1, t2);
 	}
 
 	// Calculate intersection
