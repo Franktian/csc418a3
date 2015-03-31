@@ -180,6 +180,30 @@ void Raytracer::traverseScene( SceneDagNode* node, Ray3D& ray ) {
 	_modelToWorld = _modelToWorld*node->invtrans;
 }
 
+Colour Raytracer::helpShade(Ray3D& ray, LightListNode* curLight, int n, float k)
+{  
+	Vector3D shadowDir;
+	shadowDir = curLight->light->get_position() - ray.intersection.point;
+	shadowDir[0] += k;
+    shadowDir[1] += k;
+    shadowDir[2] += k;
+	shadowDir.normalize();
+	Point3D shadowOrigin = ray.intersection.point + 0.01*shadowDir;
+
+	Ray3D shadowRay(shadowOrigin , shadowDir);
+	traverseScene(_root, shadowRay);
+	
+	// Compute non-shadow colour
+	curLight->light->shade(ray);
+	
+	// If ray intersects another object  it falls in a shadow
+	if (!shadowRay.intersection.none) 
+		return (1/n)*ray.col;
+	else{
+		return Colour(0,0,0);
+	}
+}
+
 void Raytracer::computeShading( Ray3D& ray ) {
 	LightListNode* curLight = _lightSource;
 	for (;;) {
@@ -188,8 +212,19 @@ void Raytracer::computeShading( Ray3D& ray ) {
 
 		// Implement shadows here if needed.
 
-		curLight->light->shade(ray);
+        // Compute if shadow should appear
+        // Create new ray from intersection point to light source
+       
+        //curLight = curLight->next;
+        Colour tmp;
+        for (float i = 0 ; i<2.5;i = i + 0.50){
+			tmp = helpShade(ray,curLight, 5,i);
+			ray.col[0] += tmp[0];
+			ray.col[1] += tmp[1];
+			ray.col[2] += tmp[2];
+		}
 		curLight = curLight->next;
+	
 	}
 }
 
@@ -215,20 +250,45 @@ void Raytracer::flushPixelBuffer( char *file_name ) {
 }
 
 Colour Raytracer::shadeRay( Ray3D& ray ) {
-	Colour col(0.0, 0.0, 0.0);
-	traverseScene(_root, ray);
+	Colour col(0.0, 0.0, 0.0); 
+
+	traverseScene(_root, ray); 
 	
-	// Don't bother shading if the ray didn't hit
+	// Don't bother shading if the ray didn't hit 
 	// anything.
 	if (!ray.intersection.none) {
-		computeShading(ray); 
-		col = ray.col;
+		computeShading(ray);
+
+        // You'll want to call shadeRay recursively (with a different ray, 
+    	// of course) here to implement reflection/refraction effects.  
+        float dampFactor = 0.0;
+
+        // Calculate reflection ray
+        Vector3D N = ray.intersection.normal;
+        Vector3D D = ray.dir;
+        Vector3D reflectionDir = -2*(D.dot(N))*N + D;
+        reflectionDir.normalize();
+        Point3D reflectionOrigin = ray.intersection.point + 0.01*reflectionDir;
+        Ray3D reflectionRay = Ray3D(reflectionOrigin, reflectionDir);
+
+        // calculate shade of reflected ray
+        shadeRay(reflectionRay);
+
+        // limit effective distance of reflections
+        if (reflectionRay.intersection.t_value > 10.0 || reflectionRay.intersection.t_value <= 0.0) {
+            col = ray.col;
+        }
+        else {
+	        dampFactor = fabs(1.0/reflectionRay.intersection.t_value);
+	        // contraint dampFactor to 0-0.9
+	        dampFactor = fmax(0, fmin(dampFactor,0.9));
+	        // Set colour to include reflection
+	        col = ray.col + dampFactor*reflectionRay.col;
+        }
+
+        col.clamp();
 	}
-
-	// You'll want to call shadeRay recursively (with a different ray,
-	// of course) here to implement reflection/refraction effects.
-
-	return col;
+	return col; 
 }
 
 void Raytracer::render( int width, int height, Point3D eye, Vector3D view,
@@ -307,12 +367,12 @@ int main(int argc, char* argv[])
 	// Add a unit square into the scene with material mat.
 	SceneDagNode* sphere = raytracer.addObject( new UnitSphere(), &gold );
 	SceneDagNode* plane = raytracer.addObject( new UnitSquare(), &jade );
-	SceneDagNode* cylinder = raytracer.addObject( new UnitCylinder(), &gold );
+	//SceneDagNode* cylinder = raytracer.addObject( new UnitCylinder(), &gold );
 
 	// Apply some transformations to the unit square.
 	double factor1[3] = { 1.0, 2.0, 1.0 };
 	double factor2[3] = { 6.0, 6.0, 6.0 };
-	double factor3[3] = { 1.5, 1.5, 1.5 };
+	//double factor3[3] = { 1.5, 1.5, 1.5 };
 	raytracer.translate(sphere, Vector3D(0, 0, -5));
 	raytracer.rotate(sphere, 'x', -45); 
 	raytracer.rotate(sphere, 'z', 45); 
@@ -322,9 +382,9 @@ int main(int argc, char* argv[])
 	raytracer.rotate(plane, 'z', 45); 
 	raytracer.scale(plane, Point3D(0, 0, 0), factor2);
 
-	raytracer.translate(cylinder, Vector3D(-4, 0, -5));	
+	//raytracer.translate(cylinder, Vector3D(-4, 0, -5));	
 	//raytracer.rotate(cylinder, 'z', 45); 
-	raytracer.scale(cylinder, Point3D(0, 0, 0), factor3);
+	//raytracer.scale(cylinder, Point3D(0, 0, 0), factor3);
 
 	// Render the scene, feel free to make the image smaller for
 	// testing purposes.
