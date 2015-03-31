@@ -68,54 +68,52 @@ bool UnitSphere::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 	// HINT: Remember to first transform the ray into object space  
 	// to simplify the intersection test.
 
-	Ray3D ro;
-	ro.origin = worldToModel * ray.origin;
-	ro.dir = worldToModel * ray.dir;
+	Point3D ray_origin = worldToModel * ray.origin;
+	Vector3D ray_dir = worldToModel * ray.dir;
 
-	Point3D c(0, 0, 0);
-	float t, t0, t1;
-	float r = 1;
+	Vector3D center_to_ray = ray_origin - Point3D(0, 0, 0);
 
 	// Quadratic formula to find intersection
-	float A = ro.dir.dot(ro.dir);
-	float B = 2 * (ro.dir.dot(ro.origin - c));
-	float C = (ro.origin - c).dot(ro.origin - c) - 1;
-
-	float d = B * B - 4 * A * C;
+	double a, b, c, d;
+	a = ray_dir.dot(ray_dir);
+	b = 2 * (ray_dir.dot(center_to_ray));
+	c = (center_to_ray).dot(center_to_ray) - 1;
+	d = b * b - 4 * a * c;
 
 	if (d < 0) {
 		return false;
 	}
 
-	t0 = (-B + sqrt(d)) / (2.0 * A);
-	t1 = (-B - sqrt(d)) / (2.0 * A);
+	double t, t1, t2;
 
-	if (t0 < 0 && t1 < 0) {
+	t1 = (-b + sqrt(d)) / (2 * a);
+	t2 = (-b - sqrt(d)) / (2 * a);
+
+	if (t1 < 0 && t2 < 0) {
 		return false;
+	} else if (t2 < 0) {
+		t = t1;
 	} else if (t1 < 0) {
-		t = t0;
+		t = t2;
 	} else {
-		t = fmin(t1, t0);
+		t = fmin(t1, t2);
 	}
 
 	// Calculate intersection
-	float check_x = ro.origin[0] + t * ro.dir[0];
-	float check_y = ro.origin[1] + t * ro.dir[1];
-	float check_z = ro.origin[2] + t * ro.dir[2];
-	Point3D io(check_x, check_y, check_z);
-	Vector3D norm(check_x, check_y, check_z);
-	norm.normalize();
+	double x_intersect, y_intersect, z_intersect;
+	x_intersect = ray_origin[0] + t * ray_dir[0];
+	y_intersect = ray_origin[1] + t * ray_dir[1];
+	z_intersect = ray_origin[2] + t * ray_dir[2];
 
 	if (ray.intersection.none || t < ray.intersection.t_value) {
 		ray.intersection.t_value = t;
-		ray.intersection.point = modelToWorld * io;
-		ray.intersection.normal = worldToModel.transpose() * norm;
+		ray.intersection.point = modelToWorld * Point3D(x_intersect, y_intersect, z_intersect);
+		ray.intersection.normal = worldToModel.transpose() * Vector3D(x_intersect, y_intersect, z_intersect);
 		ray.intersection.normal.normalize();
 		ray.intersection.none = false;
 		return true;
 	}
 
-	
 	return false;
 }
 
