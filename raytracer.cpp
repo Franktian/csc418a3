@@ -228,7 +228,7 @@ void Raytracer::computeShading( Ray3D& ray ) {
 	    if (!shadowRay.intersection.none) {
 	    	//computeShading(ray); 
 		    //col = ray.col;
-            ray.col = 0.5*ray.col;
+            ray.col = 0.1*ray.col;
     	}
 
 		curLight = curLight->next;
