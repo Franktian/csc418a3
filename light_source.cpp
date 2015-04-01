@@ -33,13 +33,17 @@ void PointLight::shade( Ray3D& ray ) {
 	reflection_direction.normalize();
 
 
-	Colour ambient = (*ray.intersection.mat).ambient * _col_ambient;
+	Colour ambient = ray.intersection.mat->ambient * _col_ambient;
 
-	Colour diffuse = (*ray.intersection.mat).diffuse * (std::max(0.0, normal.dot(light_direction)) * _col_diffuse);
+	Colour diffuse = ray.intersection.mat->diffuse * (std::max(0.0, normal.dot(light_direction)) * _col_diffuse);
 
-	Colour specular = (*ray.intersection.mat).specular * (std::max(0.0, pow(view_direction.dot(reflection_direction), (*ray.intersection.mat).specular_exp)) * _col_specular);
+	Colour specular = ray.intersection.mat->specular * (std::max(0.0, pow(view_direction.dot(reflection_direction), (*ray.intersection.mat).specular_exp)) * _col_specular);
 
-	ray.col = ambient + diffuse + specular;
+	ray.col = ambient + diffuse + specular; // phone
+
+	//ray.col = ambient + diffuse; // diffuse
+
+	//ray.col = ray.intersection.mat->diffuse; // scene signature
 
 	ray.col.clamp();
 

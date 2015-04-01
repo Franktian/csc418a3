@@ -228,7 +228,7 @@ void Raytracer::computeShading( Ray3D& ray ) {
 	    if (!shadowRay.intersection.none) {
 	    	//computeShading(ray); 
 		    //col = ray.col;
-            ray.col = 0.1*ray.col;
+            //ray.col = 0.5*ray.col;
     	}
 
 		curLight = curLight->next;
@@ -329,26 +329,31 @@ void Raytracer::render( int width, int height, Point3D eye, Vector3D view,
 	// Construct a ray for each pixel.
 	for (int i = 0; i < _scrHeight; i++) {
 		for (int j = 0; j < _scrWidth; j++) {
-			// Sets up ray origin and direction in view space,
-			// image plane is at z = -1.
-			Point3D origin(0, 0, 0);
-			Point3D imagePlane;
-			imagePlane[0] = (-double(width)/2 + 0.5 + j)/factor;
-			imagePlane[1] = (-double(height)/2 + 0.5 + i)/factor;
-			imagePlane[2] = -1;
+			// Anti-aliasing
+			for(float m = i; m < i + 1.0f; m += 0.5f){
+				for(float n = j; n < j + 1.0f; n += 0.5f){
+					// Sets up ray origin and direction in view space, 
+					// image plane is at z = -1.
+					Point3D origin(0, 0, 0);
+					Point3D imagePlane;
+					imagePlane[0] = (-double(width)/2 + 0.5 + n)/factor;
+					imagePlane[1] = (-double(height)/2 + 0.5 + m)/factor;
+					imagePlane[2] = -1;
 
-			// TODO: Convert ray to world space and call
-			// shadeRay(ray) to generate pixel colour. 
-			
-			Vector3D dir = viewToWorld * (imagePlane - origin);
-			dir.normalize();
-			Ray3D ray(viewToWorld * origin, dir);
+					// TODO: Convert ray to world space and call 
+					// shadeRay(ray) to generate pixel colour.
 
-			Colour col = shadeRay(ray);
+					Vector3D dir = viewToWorld * (imagePlane - origin);
+					dir.normalize();
+					Ray3D ray(viewToWorld * origin, dir);
 
-			_rbuffer[i*width+j] = int(col[0]*255);
-			_gbuffer[i*width+j] = int(col[1]*255);
-			_bbuffer[i*width+j] = int(col[2]*255);
+					Colour col = shadeRay(ray); 
+
+					_rbuffer[i*width+j] += int(col[0]*255*0.25f);
+					_gbuffer[i*width+j] += int(col[1]*255*0.25f);
+					_bbuffer[i*width+j] += int(col[2]*255*0.25f);
+				}
+			}
 		}
 	}
 
