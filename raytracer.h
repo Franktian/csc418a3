@@ -112,8 +112,6 @@ private:
 	// this function recursively for reflection and refraction.  
 	Colour shadeRay( Ray3D& ray ); 
 
-	Colour helpShade(Ray3D& ray, LightListNode* curLight, int n, float k);
-
 	// Constructs a view to world transformation matrix based on the
 	// camera parameters.
 	Matrix4x4 initInvViewMatrix( Point3D eye, Vector3D view, Vector3D up );
@@ -125,6 +123,9 @@ private:
 	// After intersection, calculate the colour of the ray by shading it
 	// with all light sources in the scene.
 	void computeShading( Ray3D& ray );
+
+	// Calculate the color of the ray fall into shadow area
+	void computeShadow( Ray3D& ray, LightListNode* curLight );
 	
 	// Width and height of the viewport.
 	int _scrWidth;
