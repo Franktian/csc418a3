@@ -185,27 +185,26 @@ void Raytracer::computeShading( Ray3D& ray ) {
 	for (;;) {
 		if (curLight == NULL) break;
 		// Each lightSource provides its own shading function.
-
 		// Implement shadows here if needed.
 
-		// Compute if shadow should appear
-		// Create new ray from intersection point to light source
-		Vector3D shadowDir = curLight->light->get_position() - ray.intersection.point;
-		shadowDir.normalize();
-		Point3D shadowOrigin = ray.intersection.point + 0.01*shadowDir;
-
-		Ray3D shadowRay(shadowOrigin , shadowDir);
-		traverseScene(_root, shadowRay);
-		
-		// Compute non-shadow colour
 		curLight->light->shade(ray);
-
-		// If ray intersects another object  it falls in a shadow
-		if (!shadowRay.intersection.none) {
-			ray.col = 0.5*ray.col;
-		}
-
+		computeShadow(ray, curLight);
 		curLight = curLight->next;
+	}
+}
+
+void Raytracer::computeShadow( Ray3D& ray, LightListNode* curLight ) {
+	Vector3D shadow_direction = curLight->light->get_position() - ray.intersection.point;
+	Point3D shadow_origin = ray.intersection.point + 0.01*shadow_direction;
+
+	shadow_direction.normalize();
+
+	Ray3D shadow_ray(shadow_origin, shadow_direction);
+	traverseScene(_root, shadow_ray);
+
+	// Falls into shadow, multiply by 0.5 to make it darker
+	if (!shadow_ray.intersection.none) {
+		ray.col = 0.5*ray.col;
 	}
 }
 
