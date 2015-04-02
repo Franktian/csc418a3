@@ -136,12 +136,12 @@ bool Cylinder::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 	c = ray_origin[0] * ray_origin[0] + ray_origin[1] * ray_origin[1] - 1;
 	d = b * b - a * c;
 
-	Point3D intersection;
-	Vector3D normal_1, normal_2;
-
 	if (d < 0) {
 		return false;
 	}
+
+	Point3D intersection;
+	Vector3D normal_1, normal_2;
 
 	double t1, t2, s1, s2;
 
@@ -165,10 +165,6 @@ bool Cylinder::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 		normal_1 = Vector3D(0, 0, 1);
 	}
 
-	if (t1* t1 < 0.001){
-		return false;
-	}
-
 	// Intersection calculation
 	intersection = ray_origin + t1 * ray_dir;
 	if (intersection[0]*intersection[0] + intersection[1] * intersection[1] <= 1)
@@ -182,9 +178,6 @@ bool Cylinder::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 		}
 	}
 
-	if (t2 * t2 < 0.001) {
-		return false;
-	}
 	intersection = ray_origin + t2 * ray_dir;
 	normal_2[0] = intersection[0];
 	normal_2[1] = intersection[1];
