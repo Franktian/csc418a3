@@ -188,7 +188,7 @@ void Raytracer::computeShading( Ray3D& ray ) {
 		// Implement shadows here if needed.
 
 		curLight->light->shade(ray);
-		//computeShadow(ray, curLight);
+		computeShadow(ray, curLight);
 		curLight = curLight->next;
 	}
 }
@@ -239,8 +239,8 @@ Colour Raytracer::shadeRay( Ray3D& ray ) {
 	if (!ray.intersection.none) {
 		computeShading(ray);
 		// compute reflection effect
-		//col = shadeReflection(ray);
-		col = ray.col;
+		col = shadeReflection(ray);
+		//col = ray.col;
 
 	}
 
