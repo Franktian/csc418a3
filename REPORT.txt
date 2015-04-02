@@ -1,0 +1,22 @@
+Part 1
+
+Ray casting is implemented within the render method of raytracer.cpp, by defining the origin from (0, 0, 0) and viewing direction from the image plane, then call shadeRay(), intersecting with the unit square and unit sphere to shade the colour. Intersection code are implemented in scene_object.cpp.
+
+Point light phong shading is implemented  in light_source.cpp. By changing the structure to formulate the color:
+	- scene signiture: assign colour with ray.intersection.mat->diffuse;
+	- diffuse: assign colour with ambient + diffuse;
+	- phong: assign colour with all three factors: ambient + diffuse + specular;
+
+Anti-aliasing is implemented within render method of raytracer.cpp by creating two loops and compute ray 4 times for a singe pixel.
+
+Part 2
+
+Reflection, shadow and cylinder intersection are implemented
+
+The center of the cylinder is located at the origin, with height 1 and top circle located (0, 0, 0.5) bottom circle (0, 0, -0.5)
+
+Reflection composes of two method:
+	- getReflectionRay - to generate reflection ray based on the angle of the ray and the intersected object
+	- shadeRelfection - to shade the colour and generate relfection effect
+
+Shadow is developed 
