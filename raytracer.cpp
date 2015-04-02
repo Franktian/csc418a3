@@ -229,48 +229,6 @@ void Raytracer::flushPixelBuffer( char *file_name ) {
 	delete _bbuffer;
 }
 
-// Colour Raytracer::shadeRay( Ray3D& ray ) {
-// 	Colour col(0.0, 0.0, 0.0); 
-
-// 	traverseScene(_root, ray); 
-	
-// 	// Don't bother shading if the ray didn't hit 
-// 	// anything.
-// 	if (!ray.intersection.none) {
-// 		computeShading(ray);
-
-//         // You'll want to call shadeRay recursively (with a different ray, 
-//     	// of course) here to implement reflection/refraction effects.  
-//         float dampFactor = 0.0;
-
-//         // Calculate reflection ray
-//         Vector3D N = ray.intersection.normal;
-//         Vector3D D = ray.dir;
-//         Vector3D reflectionDir = -2*(D.dot(N))*N + D;
-//         reflectionDir.normalize();
-//         Point3D reflectionOrigin = ray.intersection.point + 0.01*reflectionDir;
-//         Ray3D reflectionRay = Ray3D(reflectionOrigin, reflectionDir);
-
-//         // calculate shade of reflected ray
-//         shadeRay(reflectionRay);
-
-//         // limit effective distance of reflections
-//         if (reflectionRay.intersection.t_value > 10.0 || reflectionRay.intersection.t_value <= 0.0) {
-//             col = ray.col;
-//         }
-//         else {
-// 	        dampFactor = fabs(1.0/reflectionRay.intersection.t_value);
-// 	        // contraint dampFactor to 0-0.9
-// 	        dampFactor = fmax(0, fmin(dampFactor,0.9));
-// 	        // Set colour to include reflection
-// 	        col = ray.col + dampFactor*reflectionRay.col;
-//         }
-
-//         col.clamp();
-// 	}
-// 	return col; 
-// }
-
 Colour Raytracer::shadeRay( Ray3D& ray ) {
 	Colour col(0.0, 0.0, 0.0); 
 	// Traverse scene looking for intersections
@@ -279,14 +237,54 @@ Colour Raytracer::shadeRay( Ray3D& ray ) {
 	// Don't bother shading if the ray didn't hit 
 	// anything.
 	if (!ray.intersection.none) {
-		computeShading(ray); 
-		col = ray.col;
+		computeShading(ray);
+		// compute reflection effect
+		col = shadeReflection(ray);
+		//col = ray.col;
+
 	}
 
 	// You'll want to call shadeRay recursively (with a different ray, 
 	// of course) here to implement reflection/refraction effects.  
 
 	return col; 
+}
+
+Colour Raytracer::shadeReflection (Ray3D & ray ) {
+	Colour col(0.0, 0.0, 0.0);
+	float factor = 0.0;
+
+	Ray3D reflection_ray = getReflectionRay(ray);
+
+	// Recursively call shadeRay
+	shadeRay(reflection_ray);
+
+	if (reflection_ray.intersection.t_value > 10.0 || reflection_ray.intersection.t_value <= 0.0) {
+		col = ray.col;
+	} else {
+		factor = fabs(1.0/reflection_ray.intersection.t_value);
+		factor = fmax(0, fmin(factor,0.9));
+		col = ray.col + factor * reflection_ray.col;
+	}
+
+	col.clamp();
+
+	return col;
+}
+
+Ray3D& Raytracer::getReflectionRay (Ray3D& ray ) {
+	Vector3D normal, direction, reflection_direction;
+	Point3D reflection_origin;
+
+	normal = ray.intersection.normal;
+	direction = ray.dir;
+
+	reflection_direction = -2 * direction.dot(normal) * normal + direction;
+	reflection_direction.normalize();
+	reflection_origin = ray.intersection.point + 0.01 * reflection_direction;
+
+	Ray3D reflection_ray(reflection_origin, reflection_direction);
+	return reflection_ray;
 }
 
 void Raytracer::render( int width, int height, Point3D eye, Vector3D view,
