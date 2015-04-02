@@ -1,10 +1,13 @@
 /***********************************************************
 	 Starter code for Assignment 3
+
 	 This code was originally written by Jack Wang for
 			CSC418, SPRING 2005
+
 		Implementations of functions in raytracer.h, 
 		and the main function which specifies the 
-		scene to be rendered.	
+		scene to be rendered.
+
 ***********************************************************/
 
 
@@ -371,7 +374,7 @@ int main(int argc, char* argv[])
 	// Add a unit square into the scene with material mat.
 	SceneDagNode* sphere = raytracer.addObject( new UnitSphere(), &gold );
 	SceneDagNode* plane = raytracer.addObject( new UnitSquare(), &jade );
-	//SceneDagNode* cylinder = raytracer.addObject( new UnitCylinder(), &gold );
+	//SceneDagNode* cylinder = raytracer.addObject( new Cylinder(), &gold );
 
 	// Apply some transformations to the unit square.
 	double factor1[3] = { 1.0, 2.0, 1.0 };
