@@ -32,7 +32,7 @@ bool UnitSquare::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 	double t;
 	t = -(ray_origin[2] / ray_dir[2]);
 
-	if (t <= 0) {
+	if (t < 0) {
 		return false;
 	}
 
