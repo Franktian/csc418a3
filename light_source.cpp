@@ -48,3 +48,34 @@ void PointLight::shade( Ray3D& ray ) {
 	ray.col.clamp();
 
 }
+
+// void AreaLight::shade(Ray3D &ray) {
+//     // Lighting is purely additive, and will be divided by number of samples, so don't clamp.
+//     Colour ambient(ray.intersection.mat->ambient);
+//     ambient = ambient * _col_ambient;
+
+//     ray.col = ray.col + ambient;
+
+//     // if (ray.in_shadow) {
+//     //     // Don't shade the ray beyond its ambient component.
+//     //     return;
+//     // }
+
+//     // Calculate the diffuse component.
+//     Vector3D s = (this->get_position() - ray.intersection.point);
+//     s.normalize();
+//     Vector3D n = ray.intersection.normal;
+//     n.normalize();
+//     Colour diffuse = max(0, s.dot(n)) * ray.intersection.mat->diffuse;
+//     diffuse = diffuse * _col_diffuse;
+
+//     // Calculate the specular component.
+//     Vector3D b = (ray.origin - ray.intersection.point);
+//     b.normalize();
+//     Vector3D r = -1 * s + 2 * (n.dot(s) * n);
+//     r.normalize();
+//     Colour specular = pow(max(0, r.dot(b)), ray.intersection.mat->specular_exp) * ray.intersection.mat->specular;
+//     specular = specular * _col_specular;
+
+//     ray.col = ray.col + diffuse + specular;
+// }

@@ -10,6 +10,10 @@
 
 #include "util.h"
 
+double max(double a, double b) {
+    return (a > b ? a : b);
+}
+
 // Base class for a light source.  You could define different types
 // of lights here, but point light is sufficient for most scenes you
 // might want to render.  Different light sources shade the ray 
@@ -38,3 +42,43 @@ private:
 	Colour _col_diffuse; 
 	Colour _col_specular; 
 };
+
+/**
+  * Area lighting that is defined by its centre and two vectors representing
+  * the patch in space where this light exists.
+  */
+// class AreaLight : public LightSource {
+// public:
+//     // A quadilateral area light defined by a centre and two vectors.
+//     AreaLight(Point3D origin, Vector3D a, Vector3D b, Colour col)
+//         : _origin(origin), _a(a), _b(b), _n(a.cross(b)), _col_ambient(col),
+//             _col_diffuse(col), _col_specular(col) {}
+//     // AreaLight(Point3D origin, Vector3D a, Vector3D b, Colour ambient, Colour diffuse, Colour specular)
+//     //     : _origin(origin), _a(a), _b(b), _n(a.cross(b)), _col_ambient(ambient), _col_diffuse(diffuse),
+//     //         _col_specular(specular) {}
+
+//     void shade(Ray3D &ray);
+//     Point3D get_position(); // Randomly return a point on this area
+//     Vector3D get_a() const { return _a; }
+//     Vector3D get_b() const { return _b; }
+//     Vector3D get_normal() const { return _n; }
+//     bool supports_soft_shadows() { return true; }
+// private:
+//     Point3D _origin;
+//     Vector3D _a;
+//     Vector3D _b;
+//     Vector3D _n;
+//     Colour _col_ambient;
+//     Colour _col_diffuse;
+//     Colour _col_specular;
+// };
+
+// // Return a randomly jittered point on the area light.
+// Point3D AreaLight::get_position() {
+//     // Random numbers between 0 and 1.
+//     double s = (rand() % 100) / 100.0;
+//     double t = (rand() % 100) / 100.0;
+
+//     return _origin + s * _a + t * _b;
+// };
+
