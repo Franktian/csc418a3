@@ -374,12 +374,12 @@ int main(int argc, char* argv[])
 	// Add a unit square into the scene with material mat.
 	//SceneDagNode* sphere = raytracer.addObject( new UnitSphere(), &gold );
 	//SceneDagNode* plane = raytracer.addObject( new UnitSquare(), &jade );
-	SceneDagNode* cylinder = raytracer.addObject( new UnitCylinder(), &gold );
+	SceneDagNode* cylinder = raytracer.addObject( new Cylinder(), &silver );
 
 	// Apply some transformations to the unit square.
 	double factor1[3] = { 1.0, 2.0, 1.0 };
 	double factor2[3] = { 6.0, 6.0, 6.0 };
-	double factor3[3] = { 1.5, 1.5, 1.5 };
+	double factor3[3] = { 1.5, 1.5, 5.0 };
 	// raytracer.translate(sphere, Vector3D(0, 0, -5));
 	// raytracer.rotate(sphere, 'x', -45); 
 	// raytracer.rotate(sphere, 'z', 45); 
@@ -388,19 +388,20 @@ int main(int argc, char* argv[])
 	// raytracer.translate(plane, Vector3D(0, 0, -7));
 	// raytracer.rotate(plane, 'z', 45); 
 	// raytracer.scale(plane, Point3D(0, 0, 0), factor2);
-
-	raytracer.translate(cylinder, Vector3D(-4, 0, -5));	
-	raytracer.rotate(cylinder, 'z', 45); 
+	//raytracer.rotate(cylinder, 'x', -45); 
+	raytracer.translate(cylinder, Vector3D(-4, 0, -7));	
+	//raytracer.rotate(cylinder, 'x', -45); 
+	//raytracer.rotate(cylinder, 'z', 45); 
 	raytracer.scale(cylinder, Point3D(0, 0, 0), factor3);
 
 	// Render the scene, feel free to make the image smaller for
 	// testing purposes.
-	raytracer.render(width, height, eye, view, up, fov, "view1.bmp");
+	//raytracer.render(width, height, eye, view, up, fov, "view1.bmp");
 
 	// Render it from a different point of view.
 	Point3D eye2(4, 2, 1);
 	Vector3D view2(-4, -2, -6);
-	raytracer.render(width, height, eye2, view2, up, fov, "view2.bmp");
+	raytracer.render(width, height, eye2, view2, up, fov, "cylinder.bmp");
 	
 	return 0;
 }

@@ -117,17 +117,13 @@ bool UnitSphere::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 	return false;
 }
 
-bool UnitCylinder::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
+bool Cylinder::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 		const Matrix4x4& modelToWorld ) {
-	// intersection for unit cylinder with height = 1 and top and bottom base circles are at
-	// (0,0,0.5), (0,0,-0.5), radius = 1 
-	// idea, mathematically intersect cylinder of inifinite height with two planes
-	// call these the caps at z =-0.5, 0.5
-
-	double lambdaStar_1;
-	double lambdaStar_2;
-	double lambda_1;
-	double lambda_2;
+	// Intersection for cylinder
+	// height = 1
+	// radius = 1
+	// top circle (0, 0, 0.5)
+	// bottom circle (0, 0, -0.5)
 
 	Point3D ray_origin = worldToModel * ray.origin;
 	Vector3D ray_dir = worldToModel * ray.dir;
@@ -140,58 +136,56 @@ bool UnitCylinder::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 	c = ray_origin[0] * ray_origin[0] + ray_origin[1] * ray_origin[1] - 1;
 	d = b * b - a * c;
 
-	//Find discriminant
 	Point3D intersection;
-	Vector3D normal_1;
-	Vector3D normal_2;
+	Vector3D normal_1, normal_2;
 
 	if (d < 0) {
 		return false;
 	}
 
-	// s1 = (-b  + sqrt(d)) / a;
-	// s2 = (-b  - sqrt(d)) / a;
-	lambda_1 = (-b  + sqrt(d)) / a;
-	lambda_2 = (-b  - sqrt(d)) / a;
-	if (lambda_1 < 0 && lambda_2 < 0)
-		return false;
-	else if (lambda_1 > 0 && lambda_2 < 0)
-		lambdaStar_2 = lambda_1;
-	else
-		lambdaStar_2 = lambda_2;
+	double t1, t2, s1, s2;
 
-	lambda_1 = (-0.5-ray_origin[2])/ray_dir[2];
-	lambda_2 = (0.5-ray_origin[2])/ray_dir[2];
-	if (lambda_1 < lambda_2){
-		lambdaStar_1 = lambda_1;
-		normal_1 = Vector3D(0, 0, -1);
+	s1 = (-b  + sqrt(d)) / a;
+	s2 = (-b  - sqrt(d)) / a;
+	if (s1 < 0 && s2 < 0) {
+		return false;
+	} else if (s1 > 0 && s2 < 0) {
+		t2 = s1;
+	} else {
+		t2 = s2;
 	}
-	else{
-		lambdaStar_1 = lambda_2;
+
+	s1 = (-0.5 - ray_origin[2]) / ray_dir[2];
+	s2 = (0.5 - ray_origin[2]) / ray_dir[2];
+	if (s1 < s2){
+		t1 = s1;
+		normal_1 = Vector3D(0, 0, -1);
+	} else {
+		t1 = s2;
 		normal_1 = Vector3D(0, 0, 1);
 	}
 
-	if (lambdaStar_1* lambdaStar_1 < 0.001){
+	if (t1* t1 < 0.001){
 		return false;
 	}
 
-	intersection = ray_origin + lambdaStar_1 * ray_dir;
+	// Intersection calculation
+	intersection = ray_origin + t1 * ray_dir;
 	if (intersection[0]*intersection[0] + intersection[1] * intersection[1] <= 1)
 	{
 		if (!ray.intersection.none < ray.intersection.t_value){
 			ray.intersection.point = intersection;
 			ray.intersection.normal = normal_1;
-			ray.intersection.t_value = lambdaStar_1;
+			ray.intersection.t_value = t1;
 			ray.intersection.none = false;
 			return true;
 		}
 	}
 
-	if (lambdaStar_2 * lambdaStar_2 < 0.001) {
+	if (t2 * t2 < 0.001) {
 		return false;
 	}
-
-	intersection = ray_origin + lambdaStar_2 * ray_dir;
+	intersection = ray_origin + t2 * ray_dir;
 	normal_2[0] = intersection[0];
 	normal_2[1] = intersection[1];
 	normal_2[2] = 0;
@@ -202,101 +196,11 @@ bool UnitCylinder::intersect( Ray3D& ray, const Matrix4x4& worldToModel,
 		if (ray.intersection.none < ray.intersection.t_value) {
 			ray.intersection.point = modelToWorld * intersection;
 			ray.intersection.normal = modelToWorld * (normal_2);
-			ray.intersection.t_value = lambdaStar_2;
-			ray.intersection.none = false;
-			return true;
-		}
-	}
-
-	return false;
-}
-
-bool Cylinder::intersect ( Ray3D& ray, const Matrix4x4& worldToModel,
-		const Matrix4x4& modelToWorld ) {
-	// Intersection for cylinder
-	// height = 2
-	// radius = 1
-	// top circle (0, 0, 1)
-	// bottom circle (0, 0, -1)
-	Point3D ray_origin = worldToModel * ray.origin;
-	Vector3D ray_dir = worldToModel * ray.dir;
-	Point3D sphere_origin(0, 0, 0);
-
-	// Quadratic formula to find intersection
-	double a, b, c, d;
-	a = ray_dir[0] * ray_dir[0] + ray_dir[1] * ray_dir[1];
-	b = ray_origin[0] * ray_dir[0] + ray_origin[1] * ray_dir[1];
-	c = ray_origin[0] * ray_origin[0] + ray_origin[1] * ray_origin[1] - 1;
-	d = b * b - a * c;
-
-	Point3D intersection;
-	Vector3D normal_0, normal_1, normal_2;
-
-	if (d < 0) {
-		return false;
-	}
-
-	double t1, t2, s1, s2;
-
-	s1 = (-b  + sqrt(d)) / a;
-	s2 = (-b  - sqrt(d)) / a;
-
-	if (s1 < 0 && s2 < 0) {
-		return false;
-	} else if (s1 > 0 && s2 < 0) {
-		t2 = s1;
-	} else {
-		t2 = s2;
-	}
-
-	double m1, m2;
-	m1 = (-0.5 - ray_origin[2]) / ray_dir[2];
-	m2 = (0.5 - ray_origin[2]) / ray_dir[2];
-	if (m1 < m2) {
-		t1 = m1;
-		normal_1 = Vector3D(0, 0, -1);
-	} else {
-		t1 = m2;
-		normal_1 = Vector3D(0, 0, 1);
-	}
-
-	if (t1 * t1 < 0.001) {
-		return false;
-	}
-
-	intersection = ray_origin + t1 * ray_dir;
-	if (intersection[0] * intersection[0] + intersection[1] * intersection[1] <= 1) {
-		if (ray.intersection.none < ray.intersection.t_value) {
-			ray.intersection.point = intersection;
-			ray.intersection.normal = normal_1;
-			ray.intersection.t_value = t1;
-			ray.intersection.none = false;
-			return true;
-		}
-		return false;
-	}
-
-	if (t2 * t2 < 0.001) {
-		return false;
-	}
-
-	intersection = ray_origin + t2 * ray_dir;
-	normal_2[0] = intersection[0];
-	normal_2[1] = intersection[1];
-	normal_2[2] = 0;
-	normal_2.normalize();
-
-	if (intersection[2] < 0.5 && intersection[2] > -0.5) {
-		if (ray.intersection.none < ray.intersection.t_value) {
-			ray.intersection.point = modelToWorld * intersection;
-			ray.intersection.normal = modelToWorld * (normal_2);
 			ray.intersection.t_value = t2;
 			ray.intersection.none = false;
 			return true;
 		}
-		return false;
 	}
 
 	return false;
-
 }
