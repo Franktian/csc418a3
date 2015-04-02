@@ -194,6 +194,7 @@ void Raytracer::computeShading( Ray3D& ray ) {
 }
 
 void Raytracer::computeShadow( Ray3D& ray, LightListNode* curLight ) {
+	// New shadow ray originated from intersection
 	Vector3D shadow_direction = curLight->light->get_position() - ray.intersection.point;
 	Point3D shadow_origin = ray.intersection.point + 0.01*shadow_direction;
 

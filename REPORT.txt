@@ -7,7 +7,7 @@ Point light phong shading is implemented  in light_source.cpp. By changing the s
 	- diffuse: assign colour with ambient + diffuse;
 	- phong: assign colour with all three factors: ambient + diffuse + specular;
 
-Anti-aliasing is implemented within render method of raytracer.cpp by creating two loops and compute ray 4 times for a singe pixel.
+Anti-aliasing is implemented within render method of raytracer.cpp by creating two loops and compute ray 4 times for a single pixel.
 
 Part 2
 
@@ -19,4 +19,20 @@ Reflection composes of two method:
 	- getReflectionRay - to generate reflection ray based on the angle of the ray and the intersected object
 	- shadeRelfection - to shade the colour and generate relfection effect
 
-Shadow is developed 
+Shadow effect is implemented within method computeShadow
+    - Form a new shadow ray from intersection to the point light
+    - Compute new intersection and turn colour darker to achieve shadow effect
+
+File structure
+- part1
+    + phong1.bmp
+    + phong2.bmp
+    + diffuse1.bmp
+    + diffuse2.bmp
+    + sig1.bmp
+    + sig2.bmp
+- part2
+    + cylinder.bmp
+    + reflection.bmp
+    + shadow.bmp
+    + shadow_reflection.bmp
