@@ -245,9 +245,6 @@ Colour Raytracer::shadeRay( Ray3D& ray ) {
 
 	}
 
-	// You'll want to call shadeRay recursively (with a different ray, 
-	// of course) here to implement reflection/refraction effects.  
-
 	return col; 
 }
 
